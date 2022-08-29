@@ -9,8 +9,8 @@
 #include <map>
 #include <vector>
 
-#include "ThostFtdcMdApi.h"
-#include "ThostFtdcTraderApi.h"
+#include "CTP/ThostFtdcMdApi.h"
+#include "CTP/ThostFtdcTraderApi.h"
 
 #define CONNECTION_STATUS_DISCONNECTED	0
 #define CONNECTION_STATUS_CONNECTED		1

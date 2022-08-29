@@ -20,7 +20,7 @@
 #include <chrono>
 #include <iostream>
 #include <atomic>
-#include "INIReader.h"
+#include "INIReader/INIReader.h"
 #include <string.h>
 
 #ifndef WIN32
