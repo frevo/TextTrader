@@ -415,17 +415,28 @@ int main(int argc,char *argv[])
 		std::cout << "open ini file failed." << std::endl;
 		return -1;
 	}
-	market_serv_addr = reader.Get("market", "address", "");
-	trade_serv_addr = reader.Get("trade", "address", "");
-	broker = reader.Get("trade", "broker", "");
-	UserProductInfo = reader.Get("trade", "UserProductInfo", "");
-	AuthCode = reader.Get("trade", "AuthCode", "");
-	AppID = reader.Get("trade", "AppID", "");
-	user = reader.Get("trade", "user", "");
-	password = reader.Get("trade", "password", "");
-	market_user = reader.Get("market", "user", "");
-	market_password = reader.Get("market", "password", "");
+	// market_serv_addr = reader.Get("market", "address", "");
+	// trade_serv_addr = reader.Get("trade", "address", "");
+	// broker = reader.Get("trade", "broker", "");
+	// UserProductInfo = reader.Get("trade", "UserProductInfo", "");
+	// AuthCode = reader.Get("trade", "AuthCode", "");
+	// AppID = reader.Get("trade", "AppID", "");
+	// user = reader.Get("trade", "user", "");
+	// password = reader.Get("trade", "password", "");
+	// market_user = reader.Get("market", "user", "");
+	// market_password = reader.Get("market", "password", "");
 
+	market_serv_addr = reader.Get("market-TTS", "address", "");
+	trade_serv_addr = reader.Get("trade-TTS", "address", "");
+	broker = reader.Get("trade-TTS", "broker", "");
+	UserProductInfo = reader.Get("trade-TTS", "UserProductInfo", "");
+	AuthCode = reader.Get("trade-TTS", "AuthCode", "");
+	AppID = reader.Get("trade-TTS", "AppID", "");
+	user = reader.Get("trade-TTS", "user", "");
+	password = reader.Get("trade-TTS", "password", "");
+	market_user = reader.Get("market-TTS", "user", "");
+	market_password = reader.Get("market-TTS", "password", "");
+	
 	int ch;
 	char user_trade_flow_path[256],user_market_flow_path[256];
 
@@ -2045,6 +2056,11 @@ void symbol_display_status()
 	mvprintw(y-1,x-25,"%s %s","krenx@qq.com",tradetime);
 }
 
+void term_init(){
+	setlocale(LC_ALL, "");
+	initscr();
+}
+
 void init_screen()
 {
 	int i,y,x;
@@ -2052,7 +2068,7 @@ void init_screen()
 	if(working_window!=WIN_MAINBOARD)
 		return;
 
-	initscr();
+	term_init();
 	cbreak();
 	nodelay(stdscr,TRUE);
 	keypad(stdscr,TRUE);
@@ -2077,7 +2093,7 @@ void refresh_screen()
 	if(working_window!=WIN_MAINBOARD)
 		return;
 	endwin();
-	initscr();
+	term_init();
 	cbreak();
 	nodelay(stdscr,TRUE);
 	keypad(stdscr,TRUE);
@@ -2101,7 +2117,7 @@ void order_refresh_screen()
 	if(working_window!=WIN_ORDER)
 		return;
 	endwin();
-	initscr();
+	term_init();
 	cbreak();
 	nodelay(stdscr,TRUE);
 	keypad(stdscr,TRUE);
@@ -3389,7 +3405,7 @@ void orderlist_refresh_screen()
 	if(working_window!=WIN_ORDERLIST)
 		return;
 	endwin();
-	initscr();
+	term_init();
 	cbreak();
 	nodelay(stdscr,TRUE);
 	keypad(stdscr,TRUE);
