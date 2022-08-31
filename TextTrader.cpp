@@ -93,14 +93,12 @@ private:
 	std::mutex mt;
 	std::condition_variable cv;
 };
-void post_task(std::function<void()> task);
 
 int apierrorcount=sizeof(apierrorarray)/sizeof(apierror_t);
 char apierror_none[100]="";
 char tradedate[20];
 char tradetime[20];
 char status_message[100];
-
 char input_buffer[100];
 std::vector<CThostFtdcInstrumentField> vSymbols;
 std::vector<quotation_t> vquotes;
@@ -511,8 +509,10 @@ int main(int argc,char *argv[])
 	pTradeRsp->pTradeReq=CThostFtdcTraderApi::CreateFtdcTraderApi(user_trade_flow_path);
 	pTradeRsp->pTradeReq->RegisterSpi(pTradeRsp);
 	pTradeRsp->pTradeReq->RegisterFront((char*)trade_serv_addr.c_str());
-	pTradeRsp->pTradeReq->SubscribePrivateTopic(THOST_TERT_RESTART);
-	pTradeRsp->pTradeReq->SubscribePublicTopic(THOST_TERT_RESTART);
+	// pTradeRsp->pTradeReq->SubscribePrivateTopic(THOST_TERT_RESTART);
+	// pTradeRsp->pTradeReq->SubscribePublicTopic(THOST_TERT_RESTART);
+	pTradeRsp->pTradeReq->SubscribePrivateTopic(THOST_TERT_QUICK);
+	pTradeRsp->pTradeReq->SubscribePublicTopic(THOST_TERT_QUICK);
 	pTradeRsp->pTradeReq->Init();
 
 
@@ -764,7 +764,6 @@ void HandleStatusClear()
 	memset(status_message, 0x00, sizeof(status_message));
 	seconds_delayed = 0;
 }
-
 void HandleTickTimeout()
 {
 	switch(working_window){

@@ -9,6 +9,7 @@
 #include <ncursesw/curses.h>
 #include <map>
 #include <vector>
+#include <functional>
 
 #include "CTP/ThostFtdcMdApi.h"
 #include "CTP/ThostFtdcTraderApi.h"
@@ -271,6 +272,7 @@ void time_thread();
 void work_thread();
 void HandleTickTimeout();
 void HandleStatusClear();
+void post_task(std::function<void()> task);
 
 // Main Board
 void refresh_screen();
