@@ -260,10 +260,12 @@ typedef struct {
 } stAccount_t;
 
 // Basic
+void log_write(const char *content);
 int subscribe(const char *product_id);
 int unsubscribe(const char *product_id);
 const char *apistrerror(int e);
 void init_screen();
+void term_init();
 void on_key_pressed(int ch);
 void time_thread();
 void work_thread();
@@ -305,7 +307,6 @@ void focus_quotation(int index);
 
 // Favorite
 int on_key_pressed_favorite(int ch);
-
 
 // Order
 void order_refresh_screen();

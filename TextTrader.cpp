@@ -2,6 +2,10 @@
 // writen by krenx@qq.com
 //
 //
+
+
+// headers
+#pragma region 
 #include "TextTrader.h"
 #pragma warning(disable: 4786)
 #pragma warning(disable: 4018)
@@ -48,6 +52,9 @@
 #define KEYBOARD_NEXT 29 // 14 ^N
 #define KEYBOARD_PREVIOUS 30 // 16 ^P
 
+#pragma endregion
+// predefine
+#pragma region
 typedef struct {
 	int error_no;
 	char error_message[128];
@@ -132,6 +139,9 @@ std::vector<CThostFtdcInvestorPositionField> vInvestorPositions;
 
 int working_window=WIN_MAINBOARD;
 
+#pragma endregion
+// column items
+#pragma region
 typedef struct {
 	char name[30];
 	int width;
@@ -256,7 +266,6 @@ column_item_t filllist_column_items[]={
 std::vector<int> vfilllist_columns;	// fill list columns in order
 std::map<int,bool> mfilllist_columns;	// fill list column select status
 
-
 column_item_t positionlist_column_items[]={
 #define POSITIONLIST_COL_SYMBOL				0		// 合约
 	{"合约",		10},
@@ -296,7 +305,6 @@ column_item_t positionlist_column_items[]={
 std::vector<int> vpositionlist_columns;	// position list columns in order
 std::map<int,bool> mpositionlist_columns;	// position list column select status
 
-
 column_item_t acclist_column_items[]={
 #define ACCLIST_COL_ACC_ID				0		// 账号
 	{"账号",		10},
@@ -330,6 +338,9 @@ column_item_t acclist_column_items[]={
 std::vector<int> vacclist_columns;	// position list columns in order
 std::map<int,bool> macclist_columns;	// position list column select status
 
+#pragma endregion
+// Curses setting
+#pragma region
 // Mainboard Curses
 int curr_line=0,curr_col=1,max_lines,max_cols=7;
 int curr_pos=0,curr_col_pos=2;
@@ -384,6 +395,8 @@ char order_corner_input[100],order_strsearching[30],order_strmatch[30];
 #define ORDER_CORNER_MODE_SYMBOL	0
 #define ORDER_CORNER_MODE_ACCOUNT	1
 int order_corner_mode=ORDER_CORNER_MODE_SYMBOL;
+
+#pragma endregion
 
 void status_print(const char* fmt, ...)
 {
@@ -831,7 +844,6 @@ int goto_order_window_from_mainboard()
 
 	return 0;
 }
-
 int goto_orderlist_window_from_mainboard()
 {
 	working_window=WIN_ORDERLIST;
@@ -840,7 +852,6 @@ int goto_orderlist_window_from_mainboard()
 	
 	return 0;
 }
-
 int goto_filllist_window_from_mainboard()
 {
 	working_window=WIN_FILLLIST;
@@ -849,7 +860,6 @@ int goto_filllist_window_from_mainboard()
 	
 	return 0;
 }
-
 int goto_positionlist_window_from_mainboard()
 {
 	working_window=WIN_POSITION;
@@ -858,7 +868,6 @@ int goto_positionlist_window_from_mainboard()
 	
 	return 0;
 }
-
 int goto_acclist_window_from_mainboard()
 {
 	working_window=WIN_MONEY;
@@ -867,7 +876,6 @@ int goto_acclist_window_from_mainboard()
 	
 	return 0;
 }
-
 int goto_column_settings_window_from_mainboard()
 {
 	working_window=WIN_COLUMN_SETTINGS;
@@ -966,7 +974,6 @@ int goto_page_middle()
 
 	return 0;
 }
-
 int scroll_forward_1_line()
 {
 	if(vquotes.size()==0)
@@ -1029,7 +1036,6 @@ int scroll_backward_1_line()
 
 	return 0;
 }
-
 int move_forward_1_line()
 {
 	if(vquotes.size()==0)
@@ -1090,7 +1096,6 @@ int scroll_right_1_column()
 
 	return 0;
 }
-
 int move_backward_1_line()
 {
 	if(vquotes.size()==0)
@@ -1178,7 +1183,6 @@ int goto_file_bottom()
 	}
 	return 0;
 }
-
 void focus_quotation(int index)
 {
 	if(vquotes.size()==0)
@@ -1226,7 +1230,6 @@ CTradeRsp::CTradeRsp()
 CTradeRsp::~CTradeRsp()
 {
 }
-
 //已连接
 void CTradeRsp::OnFrontConnected()
 {
@@ -1237,13 +1240,11 @@ void CTradeRsp::OnFrontDisconnected(int nReason)
 {
 	post_task(std::bind(&CTradeRsp::HandleFrontDisconnected,this,nReason));
 }
-
 ///认证响应
 void CTradeRsp::OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthenticateField, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	post_task(std::bind(&CTradeRsp::HandleRspAuthenticate,this,*pRspAuthenticateField,*pRspInfo,nRequestID,bIsLast));
 }
-
 //登录应答
 void CTradeRsp::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin,CThostFtdcRspInfoField *pRspInfo,int nRequestID,bool bIsLast)
 {
@@ -1258,7 +1259,6 @@ void CTradeRsp::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin,CThost
 		memcpy(&RspInfo, pRspInfo, sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspUserLogin,this,RspUserLogin,RspInfo,nRequestID,bIsLast));
 }
-
 //登出应答
 void CTradeRsp::OnRspUserLogout(CThostFtdcUserLogoutField *pUserLogout,CThostFtdcRspInfoField *pRspInfo,int nRequestID,bool bIsLast)
 {
@@ -1273,7 +1273,6 @@ void CTradeRsp::OnRspUserLogout(CThostFtdcUserLogoutField *pUserLogout,CThostFtd
 		memcpy(&RspInfo, pRspInfo, sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspUserLogout,this, UserLogout,RspInfo,nRequestID,bIsLast));
 }
-
 //查询合约应答
 void CTradeRsp::OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -1289,7 +1288,6 @@ void CTradeRsp::OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CThos
 
 	post_task(std::bind(&CTradeRsp::HandleRspQryInstrument,this,Instrument,RspInfo,nRequestID,bIsLast));
 }
-
 void CTradeRsp::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	CThostFtdcDepthMarketDataField DepthMarketData;
@@ -1303,7 +1301,6 @@ void CTradeRsp::OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMa
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspQryDepthMarketData,this,DepthMarketData,RspInfo,nRequestID,bIsLast));
 }
-
 void CTradeRsp::OnRspQryOrder(CThostFtdcOrderField *pOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	CThostFtdcOrderField Order;
@@ -1317,7 +1314,6 @@ void CTradeRsp::OnRspQryOrder(CThostFtdcOrderField *pOrder, CThostFtdcRspInfoFie
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspQryOrder,this,Order,RspInfo,nRequestID,bIsLast));
 }
-
 void CTradeRsp::OnRspQryTrade(CThostFtdcTradeField *pTrade, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	CThostFtdcTradeField Trade;
@@ -1331,7 +1327,6 @@ void CTradeRsp::OnRspQryTrade(CThostFtdcTradeField *pTrade, CThostFtdcRspInfoFie
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspQryTrade,this,Trade,RspInfo,nRequestID,bIsLast));
 }
-
 void CTradeRsp::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInvestorPosition, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	CThostFtdcInvestorPositionField InvestorPosition;
@@ -1345,12 +1340,10 @@ void CTradeRsp::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInves
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspQryInvestorPosition,this,InvestorPosition,RspInfo,nRequestID,bIsLast));
 }
-
-	// 查询持仓明细
+// 查询持仓明细
 void CTradeRsp::OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField *pInvestorPositionDetail, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 }
-
 ///请求查询资金账户响应
 void CTradeRsp::OnRspQryTradingAccount(CThostFtdcTradingAccountField *pTradingAccount, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -1365,7 +1358,6 @@ void CTradeRsp::OnRspQryTradingAccount(CThostFtdcTradingAccountField *pTradingAc
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspQryTradingAccount,this,TradingAccount,RspInfo,nRequestID,bIsLast));
 }
-
 ///报单录入请求响应
 void CTradeRsp::OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -1380,7 +1372,6 @@ void CTradeRsp::OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostF
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspOrderInsert,this,InputOrder,RspInfo,nRequestID,bIsLast));
 }
-
 ///报单操作请求响应
 void CTradeRsp::OnRspOrderAction(CThostFtdcInputOrderActionField *pInputOrderAction, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
@@ -1395,7 +1386,6 @@ void CTradeRsp::OnRspOrderAction(CThostFtdcInputOrderActionField *pInputOrderAct
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleRspOrderAction,this,InputOrderAction,*pRspInfo,nRequestID,bIsLast));
 }
-
 void CTradeRsp::OnRtnOrder(CThostFtdcOrderField *pOrder)
 {
 	CThostFtdcOrderField Order;
@@ -1407,7 +1397,6 @@ void CTradeRsp::OnRtnOrder(CThostFtdcOrderField *pOrder)
 		memcpy(&Order,pOrder,sizeof(Order));
 	post_task(std::bind(&CTradeRsp::HandleRtnOrder,this,Order));
 }
-
 void CTradeRsp::OnRtnTrade(CThostFtdcTradeField *pTrade)
 {
 	CThostFtdcTradeField Trade;
@@ -1419,7 +1408,6 @@ void CTradeRsp::OnRtnTrade(CThostFtdcTradeField *pTrade)
 		memcpy(&Trade,pTrade,sizeof(Trade));
 	post_task(std::bind(&CTradeRsp::HandleRtnTrade,this,Trade));
 }
-
 void CTradeRsp::OnErrRtnOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo)
 {
 	CThostFtdcInputOrderField InputOrder;
@@ -1433,7 +1421,6 @@ void CTradeRsp::OnErrRtnOrderInsert(CThostFtdcInputOrderField *pInputOrder, CTho
 		memcpy(&RspInfo,pRspInfo,sizeof(RspInfo));
 	post_task(std::bind(&CTradeRsp::HandleErrRtnOrderInsert,this,InputOrder,RspInfo));
 }
-
 void CTradeRsp::OnErrRtnOrderAction(CThostFtdcOrderActionField *pOrderAction, CThostFtdcRspInfoField *pRspInfo)
 {
 	CThostFtdcOrderActionField OrderAction;
@@ -1448,8 +1435,7 @@ void CTradeRsp::OnErrRtnOrderAction(CThostFtdcOrderActionField *pOrderAction, CT
 	post_task(std::bind(&CTradeRsp::HandleErrRtnOrderAction,this,OrderAction,RspInfo));
 }
 
-
-//Quot
+//Quote
 CQuoteRsp::CQuoteRsp()
 {
 	memset(name, 0x00, sizeof(name));
@@ -1685,7 +1671,6 @@ void display_quotation(const char *product_id)
 		corner_redraw();
 	}
 }
-
 void order_display_quotation(const char *product_id)
 {
 	if(strcmp(vquotes[order_symbol_index].product_id,product_id)!=0)
@@ -1717,7 +1702,6 @@ void display_column(int col)
 			mvprintw(y,x," %s",column_items[*iter].name);
 	}
 }
-	
 
 const char *apistrerror(int e)
 {
@@ -1783,6 +1767,7 @@ void display_status()
 	
 	mvprintw(y-1,0,"[%d/%d]",curr_pos+curr_line,vquotes.size());
 	mvprintw(y - 1, 15, "%s", status_message);
+	log_write(status_message);
 	mvprintw(y-1,x-25,"%s %s","krenx@qq.com",tradetime);
 }
 void order_display_status()
@@ -1944,6 +1929,7 @@ void order_display_status()
 	move(y - 1, 0);
 	clrtoeol();
 	mvprintw(y - 1, 15, "%s", status_message);
+	log_write(status_message);
 	mvprintw(y - 1, x - 25, "%s %s", "krenx@qq.com", tradetime);
 	//mvprintw(y-1,x-25,"%s,%s",strbuyorders,strsellorders);
 }
@@ -2061,6 +2047,19 @@ void term_init(){
 	initscr();
 }
 
+void log_write(const char *content){
+	FILE *fp = fopen("test.log", "a");
+	char tradet[20];
+	struct tm *t;
+	time_t tt;
+	tt = time(NULL);
+	t=localtime(&tt);
+	sprintf(tradet,"%04d-%02d-%02d %02d:%02d:%02d",
+		t->tm_year+1900, t->tm_mon+1, t->tm_mday, t->tm_hour,t->tm_min,t->tm_sec);
+	fprintf(fp, "[%s] %s\n", &tradet, content);
+	fclose(fp);
+}
+
 void init_screen()
 {
 	int i,y,x;
@@ -2169,7 +2168,6 @@ void order_goto_file_bottom()
 	
 	order_redraw();
 }
-
 void order_goto_page_top()
 {
 	if(order_symbol_index<0)
@@ -2235,7 +2233,6 @@ void order_goto_page_middle()
 		order_curr_price=order_page_top_price-min_movement*order_max_lines/2;
 	order_redraw();
 }
-
 void order_scroll_forward_1_line()
 {
 	if(order_symbol_index<0)
@@ -2327,7 +2324,6 @@ int order_move_backward_half_page()
 		order_scroll_backward_1_line();
 	return 0;
 }
-
 void order_centralize_current_price()
 {
 	if(order_symbol_index<0)
@@ -2408,7 +2404,6 @@ int order_refresh_quote()
 	
 	return 0;
 }
-
 int order_goto_price(double price)
 {
 	int i;
@@ -2485,7 +2480,6 @@ int order_goto_price(double price)
 
 	return 0;
 }
-
 void order_redraw()
 {
 	erase();
@@ -2552,7 +2546,6 @@ void order_display_orders()
 			order_display_orders_at_price(order_page_top_price-min_movement*i);
 	}
 }
-
 void order_display_orders_at_price(double price)
 {
 	if(order_symbol_index<0)
@@ -2646,7 +2639,6 @@ void order_display_orders_at_price(double price)
 		}
 	}
 }
-
 void order_display_bid_ask()
 {
 	if(order_symbol_index<0)
@@ -2755,7 +2747,6 @@ void order_display_bid_ask()
 		}
 	}
 }
-
 void order_display_focus()
 {
 	if(order_symbol_index<0)
@@ -2811,7 +2802,6 @@ void order_move_orders()
 	order_moving_at_price=order_curr_price;
 	order_is_moving=1;
 }
-
 void order_move_complete()
 {
 	if(order_symbol_index<0)
@@ -3022,7 +3012,6 @@ void order_revert_at_market()
 		order_buy_at_limit_price(high_limit,(nSellPosi-nBuyPosi)*2);
 	order_redraw();
 }
-
 void order_sell_at_limit_price(double price,unsigned int n)
 {
 	if(order_symbol_index<0)
@@ -3288,7 +3277,6 @@ void order_cancel_all_orders()
 	}
 	order_redraw();
 }
-
 char getOrderOffsetFlag(const char* szAccName,const char* szSymbol,char cDirection,unsigned int nQty,unsigned int &nOpen,unsigned int &nClose,unsigned int &nCloseToday)
 {
 	nOpen=0;
@@ -3334,7 +3322,6 @@ char getOrderOffsetFlag(const char* szAccName,const char* szSymbol,char cDirecti
 
 	return 0;
 }
-
 void order_move_forward_1_line()
 {
 	if(order_symbol_index<0)
@@ -3365,7 +3352,6 @@ void order_move_forward_1_line()
 
 	order_redraw();
 }
-
 void order_move_backward_1_line()
 {
 	if(order_symbol_index<0)
@@ -3395,7 +3381,6 @@ void order_move_backward_1_line()
 	order_redraw();
 }
 
-
 // Order List
 
 void orderlist_refresh_screen()
@@ -3417,7 +3402,6 @@ void orderlist_refresh_screen()
 	orderlist_max_lines=y-2;
 	orderlist_redraw();
 }
-
 void orderlist_redraw()
 {
 	erase();
@@ -3426,7 +3410,6 @@ void orderlist_redraw()
 	orderlist_display_status();
 	orderlist_display_focus();
 }
-
 void orderlist_reset(const char *user)
 {
 	// Order List Curses
@@ -3445,7 +3428,6 @@ void orderlist_reset(const char *user)
 	if(working_window==WIN_ORDERLIST)
 		orderlist_redraw();
 }
-
 void orderlist_display_title()
 {
 	int y,x,pos,maxy,maxx;
@@ -3531,7 +3513,6 @@ void orderlist_display_title()
 		}
 	}
 }
-
 void orderlist_display_status()
 {
 	int y,x;
@@ -3588,9 +3569,6 @@ void orderlist_display_status()
 	mvprintw(y - 1, 15, "%s", status_message);
 	mvprintw(y-1,x-25,"%s %s","krenx@qq.com",tradetime);
 }
-
-
-
 void orderlist_display_order(int index)
 {
 	int i,y,x,pos,maxy,maxx,j;
@@ -3719,7 +3697,6 @@ void orderlist_display_order(int index)
 		}
 	}
 }
-
 void orderlist_display_orders()
 {
 	int i;
@@ -3727,13 +3704,11 @@ void orderlist_display_orders()
 	for(i=orderlist_curr_pos;i<=orderlist_curr_pos+orderlist_max_lines-1 && i<vOrders.size();i++)
 		orderlist_display_order(i);
 }
-
 void orderlist_display_focus()
 {
 	if(orderlist_curr_line!=0)
 		mvchgat(orderlist_curr_line,0,-1,A_REVERSE,0,NULL);
 }
-
 void orderlist_scroll_left_1_column()
 {
 	if(orderlist_curr_col_pos==2)
@@ -3748,7 +3723,6 @@ void orderlist_scroll_right_1_column()
 	while(morderlist_columns[vorderlist_columns[++orderlist_curr_col_pos]]==false); //	取消所在列的反白显示
 	orderlist_redraw();
 }
-
 void orderlist_move_forward_1_line()
 {
 	if(vOrders.size()==0)
@@ -3767,7 +3741,6 @@ void orderlist_move_forward_1_line()
 	}
 	orderlist_redraw();
 }
-
 void orderlist_move_backward_1_line()
 {
 	if(vOrders.size()==0)
@@ -3786,7 +3759,6 @@ void orderlist_move_backward_1_line()
 	}
 	orderlist_redraw();
 }
-
 void orderlist_scroll_forward_1_line()
 {
 	if(vOrders.size()==0)
@@ -3803,7 +3775,6 @@ void orderlist_scroll_forward_1_line()
 	orderlist_curr_pos++;
 	orderlist_redraw();
 }
-
 void orderlist_scroll_backward_1_line()
 {
 	if(vOrders.size()==0)
@@ -3821,7 +3792,6 @@ void orderlist_scroll_backward_1_line()
 	orderlist_curr_pos--;
 	orderlist_redraw();
 }
-
 void orderlist_goto_file_top()
 {
 	if(vOrders.size()==0)
@@ -3839,7 +3809,6 @@ void orderlist_goto_file_top()
 	}
 	orderlist_redraw();
 }
-
 void orderlist_goto_file_bottom()
 {
 	if(vOrders.size()==0)
@@ -3857,7 +3826,6 @@ void orderlist_goto_file_bottom()
 	}
 	orderlist_redraw();
 }
-
 void orderlist_goto_page_top()
 {
 	if(vOrders.size()==0)
@@ -3901,7 +3869,6 @@ void orderlist_goto_page_middle()
 	}
 	orderlist_redraw();
 }
-
 void orderlist_move_forward_1_page()
 {
 	int i;
@@ -3927,7 +3894,6 @@ void orderlist_move_backward_half_page()
 		orderlist_scroll_backward_1_line();
 }
 
-
 // Fill List
 
 void filllist_refresh_screen()
@@ -3949,7 +3915,6 @@ void filllist_refresh_screen()
 	filllist_max_lines=y-2;
 	filllist_redraw();
 }
-
 void filllist_redraw()
 {
 	erase();
@@ -3958,7 +3923,6 @@ void filllist_redraw()
 	filllist_display_status();
 	filllist_display_focus();
 }
-
 void filllist_reset(const char *user)
 {
 	// Filled Order List Curses
@@ -4046,7 +4010,6 @@ void filllist_display_title()
 		}
 	}
 }
-
 void filllist_display_status()
 {
 	int y,x;
@@ -4103,9 +4066,6 @@ void filllist_display_status()
 	mvprintw(y - 1, 15, "%s", status_message);
 	mvprintw(y-1,x-25,"%s %s","krenx@qq.com",tradetime);
 }
-
-
-
 void filllist_display_filledorder(int index)
 {
 	int i,y,x,pos,maxy,maxx,j;
@@ -4204,7 +4164,6 @@ void filllist_display_filledorder(int index)
 		}
 	}
 }
-
 void filllist_display_filledorders()
 {
 	int i;
@@ -4212,13 +4171,11 @@ void filllist_display_filledorders()
 	for(i=filllist_curr_pos;i<=filllist_curr_pos+filllist_max_lines-1 && i<vFilledOrders.size();i++)
 		filllist_display_filledorder(i);
 }
-
 void filllist_display_focus()
 {
 	if(filllist_curr_line!=0)
 		mvchgat(filllist_curr_line,0,-1,A_REVERSE,0,NULL);
 }
-
 void filllist_scroll_left_1_column()
 {
 	if(filllist_curr_col_pos==2)
@@ -4233,7 +4190,6 @@ void filllist_scroll_right_1_column()
 	while(mfilllist_columns[vfilllist_columns[++filllist_curr_col_pos]]==false); //	取消所在列的反白显示
 	filllist_redraw();
 }
-
 void filllist_move_forward_1_line()
 {
 	if(vFilledOrders.size()==0)
@@ -4252,7 +4208,6 @@ void filllist_move_forward_1_line()
 	}
 	filllist_redraw();
 }
-
 void filllist_move_backward_1_line()
 {
 	if(vFilledOrders.size()==0)
@@ -4271,7 +4226,6 @@ void filllist_move_backward_1_line()
 	}
 	filllist_redraw();
 }
-
 void filllist_scroll_forward_1_line()
 {
 	if(vFilledOrders.size()==0)
@@ -4288,7 +4242,6 @@ void filllist_scroll_forward_1_line()
 	filllist_curr_pos++;
 	filllist_redraw();
 }
-
 void filllist_scroll_backward_1_line()
 {
 	if(vFilledOrders.size()==0)
@@ -4306,7 +4259,6 @@ void filllist_scroll_backward_1_line()
 	filllist_curr_pos--;
 	filllist_redraw();
 }
-
 void filllist_goto_file_top()
 {
 	if(vFilledOrders.size()==0)
@@ -4324,7 +4276,6 @@ void filllist_goto_file_top()
 	}
 	filllist_redraw();
 }
-
 void filllist_goto_file_bottom()
 {
 	if(vFilledOrders.size()==0)
@@ -4342,7 +4293,6 @@ void filllist_goto_file_bottom()
 	}
 	filllist_redraw();
 }
-
 void filllist_goto_page_top()
 {
 	if(vFilledOrders.size()==0)
@@ -4386,7 +4336,6 @@ void filllist_goto_page_middle()
 	}
 	filllist_redraw();
 }
-
 void filllist_move_forward_1_page()
 {
 	int i;
@@ -4412,7 +4361,6 @@ void filllist_move_backward_half_page()
 		filllist_scroll_backward_1_line();
 }
 
-
 // Position List
 
 void positionlist_refresh_screen()
@@ -4434,7 +4382,6 @@ void positionlist_refresh_screen()
 	positionlist_max_lines=y-2;
 	positionlist_redraw();
 }
-
 void positionlist_redraw()
 {
 	erase();
@@ -4443,7 +4390,6 @@ void positionlist_redraw()
 	positionlist_display_status();
 	positionlist_display_focus();
 }
-
 void positionlist_reset(const char *user)
 {
 	// Position List Curses
@@ -4555,7 +4501,6 @@ void positionlist_display_title()
 		}
 	}
 }
-
 void positionlist_display_status()
 {
 	int y,x;
@@ -4612,8 +4557,6 @@ void positionlist_display_status()
 	mvprintw(y - 1, 15, "%s", status_message);
 	mvprintw(y-1,x-25,"%s %s","krenx@qq.com",tradetime);
 }
-
-
 void positionlist_display_position(const char *szAccID,const char *szExchangeID,const char *szSymbolID)
 {
 	int i,y,x,pos,maxy,maxx,j;
@@ -4731,7 +4674,6 @@ void positionlist_display_position(const char *szAccID,const char *szExchangeID,
 		}
 	}
 }
-
 void positionlist_display_positions()
 {
 	int i;
@@ -4739,13 +4681,11 @@ void positionlist_display_positions()
 	for(i=0;i<vPositions.size();i++)
 		positionlist_display_position(vPositions[i].AccID,vPositions[i].ExchangeID,vPositions[i].SymbolID);
 }
-
 void positionlist_display_focus()
 {
 	if(positionlist_curr_line!=0)
 		mvchgat(positionlist_curr_line,0,-1,A_REVERSE,0,NULL);
 }
-
 void positionlist_scroll_left_1_column()
 {
 	if(positionlist_curr_col_pos==2)
@@ -4760,7 +4700,6 @@ void positionlist_scroll_right_1_column()
 	while(mpositionlist_columns[vpositionlist_columns[++positionlist_curr_col_pos]]==false); //	取消所在列的反白显示
 	positionlist_redraw();
 }
-
 void positionlist_move_forward_1_line()
 {
 	if(vPositions.size()==0)
@@ -4779,7 +4718,6 @@ void positionlist_move_forward_1_line()
 	}
 	positionlist_redraw();
 }
-
 void positionlist_move_backward_1_line()
 {
 	if(vPositions.size()==0)
@@ -4798,7 +4736,6 @@ void positionlist_move_backward_1_line()
 	}
 	positionlist_redraw();
 }
-
 void positionlist_scroll_forward_1_line()
 {
 	if(vPositions.size()==0)
@@ -4815,7 +4752,6 @@ void positionlist_scroll_forward_1_line()
 	positionlist_curr_pos++;
 	positionlist_redraw();
 }
-
 void positionlist_scroll_backward_1_line()
 {
 	if(vPositions.size()==0)
@@ -4833,7 +4769,6 @@ void positionlist_scroll_backward_1_line()
 	positionlist_curr_pos--;
 	positionlist_redraw();
 }
-
 void positionlist_goto_file_top()
 {
 	if(vPositions.size()==0)
@@ -4851,7 +4786,6 @@ void positionlist_goto_file_top()
 	}
 	positionlist_redraw();
 }
-
 void positionlist_goto_file_bottom()
 {
 	if(vPositions.size()==0)
@@ -4869,7 +4803,6 @@ void positionlist_goto_file_bottom()
 	}
 	positionlist_redraw();
 }
-
 void positionlist_goto_page_top()
 {
 	if(vPositions.size()==0)
@@ -4913,7 +4846,6 @@ void positionlist_goto_page_middle()
 	}
 	positionlist_redraw();
 }
-
 void positionlist_move_forward_1_page()
 {
 	int i;
@@ -4939,7 +4871,6 @@ void positionlist_move_backward_half_page()
 		positionlist_scroll_backward_1_line();
 }
 
-
 // Account List
 
 void acclist_refresh_screen()
@@ -4961,7 +4892,6 @@ void acclist_refresh_screen()
 	acclist_max_lines=y-2;
 	acclist_redraw();
 }
-
 void acclist_redraw()
 {
 	erase();
@@ -4970,7 +4900,6 @@ void acclist_redraw()
 	acclist_display_status();
 	acclist_display_focus();
 }
-
 void acclist_reset(const char *user)
 {
 	// Account List Curses
@@ -5060,7 +4989,6 @@ void acclist_display_title()
 		}
 	}
 }
-
 void acclist_display_status()
 {
 	int y,x;
@@ -5117,9 +5045,6 @@ void acclist_display_status()
 	mvprintw(y - 1, 15, "%s", status_message);
 	mvprintw(y-1,x-25,"%s %s","krenx@qq.com",tradetime);
 }
-
-
-
 void acclist_display_acc(const char *szBrokerID,const char *szAccID)
 {
 	int i,y,x,pos,maxy,maxx;
@@ -5208,7 +5133,6 @@ void acclist_display_acc(const char *szBrokerID,const char *szAccID)
 		}
 	}
 }
-
 void acclist_display_accs()
 {
 	int i;
@@ -5216,13 +5140,11 @@ void acclist_display_accs()
 	for(i=0;i<vAccounts.size();i++)
 		acclist_display_acc(vAccounts[i].BrokerID,vAccounts[i].AccID);
 }
-
 void acclist_display_focus()
 {
 	if(acclist_curr_line!=0)
 		mvchgat(acclist_curr_line,0,-1,A_REVERSE,0,NULL);
 }
-
 void acclist_scroll_left_1_column()
 {
 	if(acclist_curr_col_pos==2)
@@ -5237,7 +5159,6 @@ void acclist_scroll_right_1_column()
 	while(macclist_columns[vacclist_columns[++acclist_curr_col_pos]]==false); //	取消所在列的反白显示
 	acclist_redraw();
 }
-
 void acclist_move_forward_1_line()
 {
 	if(vAccounts.size()==0)
@@ -5256,7 +5177,6 @@ void acclist_move_forward_1_line()
 	}
 	acclist_redraw();
 }
-
 void acclist_move_backward_1_line()
 {
 	if(vAccounts.size()==0)
@@ -5275,7 +5195,6 @@ void acclist_move_backward_1_line()
 	}
 	acclist_redraw();
 }
-
 void acclist_scroll_forward_1_line()
 {
 	if(vAccounts.size()==0)
@@ -5292,7 +5211,6 @@ void acclist_scroll_forward_1_line()
 	acclist_curr_pos++;
 	acclist_redraw();
 }
-
 void acclist_scroll_backward_1_line()
 {
 	if(vAccounts.size()==0)
@@ -5310,7 +5228,6 @@ void acclist_scroll_backward_1_line()
 	acclist_curr_pos--;
 	acclist_redraw();
 }
-
 void acclist_goto_file_top()
 {
 	if(vAccounts.size()==0)
@@ -5328,7 +5245,6 @@ void acclist_goto_file_top()
 	}
 	acclist_redraw();
 }
-
 void acclist_goto_file_bottom()
 {
 	if(vAccounts.size()==0)
@@ -5346,7 +5262,6 @@ void acclist_goto_file_bottom()
 	}
 	acclist_redraw();
 }
-
 void acclist_goto_page_top()
 {
 	if(vAccounts.size()==0)
@@ -5390,7 +5305,6 @@ void acclist_goto_page_middle()
 	}
 	acclist_redraw();
 }
-
 void acclist_move_forward_1_page()
 {
 	int i;
@@ -5415,7 +5329,6 @@ void acclist_move_backward_half_page()
 	for(i=0;i<acclist_max_lines/2;i++)
 		acclist_scroll_backward_1_line();
 }
-
 
 // Mainboard column settings
 void column_settings_refresh_screen()
@@ -5519,7 +5432,6 @@ void symbol_refresh_screen()
 	}
 	symbol_display_status();
 }
-
 void display_title()
 {
 	int y,x,pos,maxy,maxx;
@@ -6167,7 +6079,6 @@ int goto_orderlist_window_from_order()
 	
 	return 0;
 }
-
 int goto_filllist_window_from_order()
 {
 	
@@ -6178,7 +6089,6 @@ int goto_filllist_window_from_order()
 	
 	return 0;
 }
-
 int goto_positionlist_window_from_order()
 {
 	
@@ -6189,7 +6099,6 @@ int goto_positionlist_window_from_order()
 	
 	return 0;
 }
-
 int goto_acclist_window_from_order()
 {
 	
@@ -6200,7 +6109,6 @@ int goto_acclist_window_from_order()
 	
 	return 0;
 }
-
 int goto_mainboard_window_from_orderlist()
 {
 	int i;
@@ -6220,7 +6128,6 @@ int goto_mainboard_window_from_orderlist()
 	
 	return 0;
 }
-
 int goto_mainboard_window_from_filllist()
 {
 	int i;
@@ -6240,7 +6147,6 @@ int goto_mainboard_window_from_filllist()
 	
 	return 0;
 }
-
 int goto_mainboard_window_from_positionlist()
 {
 	int i;
@@ -6260,7 +6166,6 @@ int goto_mainboard_window_from_positionlist()
 	
 	return 0;
 }
-
 int goto_mainboard_window_from_acclist()
 {
 	int i;
@@ -6280,7 +6185,6 @@ int goto_mainboard_window_from_acclist()
 	
 	return 0;
 }
-
 int goto_mainboard_window_from_log()
 {
 	int i;
@@ -6300,7 +6204,6 @@ int goto_mainboard_window_from_log()
 	
 	return 0;
 }
-
 int goto_order_window_from_orderlist()
 {
 	if(vOrders.size()==0)
@@ -6328,7 +6231,6 @@ int goto_order_window_from_orderlist()
 	
 	return 0;
 }
-
 int goto_filllist_window_from_orderlist()
 {
 	
@@ -6337,7 +6239,6 @@ int goto_filllist_window_from_orderlist()
 		
 	return 0;
 }
-
 int goto_positionlist_window_from_orderlist()
 {
 	
@@ -6346,7 +6247,6 @@ int goto_positionlist_window_from_orderlist()
 	
 	return 0;
 }
-
 int goto_acclist_window_from_orderlist()
 {
 	
@@ -6355,7 +6255,6 @@ int goto_acclist_window_from_orderlist()
 	
 	return 0;
 }
-
 int goto_mainboard_window_from_column_settings()
 {
 	int i;
@@ -6790,6 +6689,7 @@ int input_parse_column_settings(int *num,int *cmd)
 	
 	return 0;
 }
+
 int on_key_pressed_column_settings(int ch)
 {
 	int Num,Cmd;
@@ -7655,7 +7555,6 @@ int goto_order_window_from_filllist()
 	
 	return 0;
 }
-
 int goto_order_window_from_positionlist()
 {
 	if(vPositions.size()==0)
@@ -7683,19 +7582,16 @@ int goto_order_window_from_positionlist()
 	
 	return 0;
 }
-
 int goto_order_window_from_acclist()
 {
 	
 	return 0;
 }
-
 int goto_order_window_from_log()
 {
 	
 	return 0;
 }
-
 int goto_orderlist_window_from_filllist()
 {
 	
@@ -7704,7 +7600,6 @@ int goto_orderlist_window_from_filllist()
 	
 	return 0;
 }
-
 int goto_positionlist_window_from_filllist()
 {
 	
@@ -7713,7 +7608,6 @@ int goto_positionlist_window_from_filllist()
 	
 	return 0;
 }
-
 int goto_acclist_window_from_filllist()
 {
 	
@@ -7722,7 +7616,6 @@ int goto_acclist_window_from_filllist()
 	
 	return 0;
 }
-
 int goto_orderlist_window_from_positionlist()
 {
 	
@@ -7731,7 +7624,6 @@ int goto_orderlist_window_from_positionlist()
 	
 	return 0;
 }
-
 int goto_orderlist_window_from_acclist()
 {
 	
@@ -7740,7 +7632,6 @@ int goto_orderlist_window_from_acclist()
 	
 	return 0;
 }
-
 int goto_orderlist_window_from_log()
 {
 	
@@ -7749,8 +7640,6 @@ int goto_orderlist_window_from_log()
 	
 	return 0;
 }
-
-
 int goto_filllist_window_from_positionlist()
 {
 	
@@ -7759,7 +7648,6 @@ int goto_filllist_window_from_positionlist()
 	
 	return 0;
 }
-
 int goto_acclist_window_from_positionlist()
 {
 	
@@ -7768,7 +7656,6 @@ int goto_acclist_window_from_positionlist()
 	
 	return 0;
 }
-
 int goto_acclist_window_from_log()
 {
 	
@@ -7777,7 +7664,6 @@ int goto_acclist_window_from_log()
 	
 	return 0;
 }
-
 int goto_filllist_window_from_acclist()
 {
 	
@@ -7786,7 +7672,6 @@ int goto_filllist_window_from_acclist()
 	
 	return 0;
 }
-
 int goto_filllist_window_from_log()
 {
 	
@@ -7795,7 +7680,6 @@ int goto_filllist_window_from_log()
 	
 	return 0;
 }
-
 int goto_positionlist_window_from_acclist()
 {
 	if(vAccounts.size()==0)
@@ -7818,7 +7702,6 @@ int goto_positionlist_window_from_acclist()
 	
 	return 0;
 }
-
 int goto_positionlist_window_from_log()
 {
 	working_window=WIN_POSITION;
@@ -7826,8 +7709,6 @@ int goto_positionlist_window_from_log()
 	
 	return 0;
 }
-
-
 
 int column_settings_move_up_1_line()
 {
@@ -7863,7 +7744,6 @@ int column_settings_move_up_1_line()
 	
 	return 0;
 }
-
 int column_settings_move_down_1_line()
 {
 	std::vector<int>::iterator iter;
@@ -7898,7 +7778,6 @@ int column_settings_move_down_1_line()
 	
 	return 0;
 }
-
 int column_settings_select_column()
 {
 	std::vector<int>::iterator iter;
@@ -7923,7 +7802,6 @@ int column_settings_select_column()
 
 	return 0;
 }
-
 int column_settings_move_backward_1_line()
 {
 	std::vector<int>::iterator iter;
@@ -7959,7 +7837,6 @@ int column_settings_move_backward_1_line()
 	
 	return 0;
 }
-
 int column_settings_move_forward_1_line()
 {
 	std::vector<int>::iterator iter;
@@ -8164,7 +8041,6 @@ void CTradeRsp::HandleRspAuthenticate(CThostFtdcRspAuthenticateField& RspAuthent
 	sprintf(Req.UserProductInfo,"%s",UserProductInfo);
 	pTradeReq->ReqUserLogin(&Req,nTradeRequestID++);
 }
-
 void CTradeRsp::HandleRspUserLogin(CThostFtdcRspUserLoginField& RspUserLogin,CThostFtdcRspInfoField& RspInfo,int nRequestID,bool bIsLast)
 {
 	if(RspInfo.ErrorID!=0){
@@ -8304,7 +8180,6 @@ void CTradeRsp::HandleRspQryInstrument(CThostFtdcInstrumentField& Instrument, CT
 	while ((r = pTradeReq->ReqQryInvestorPosition(&Req, nTradeRequestID++)) == -2 || r == -3)
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
-
 void CTradeRsp::HandleRspQryDepthMarketData(CThostFtdcDepthMarketDataField& DepthMarketData, CThostFtdcRspInfoField& RspInfo, int nRequestID, bool bIsLast)
 {
 	if(RspInfo.ErrorID!=0){
@@ -8363,7 +8238,6 @@ void CTradeRsp::HandleRspQryDepthMarketData(CThostFtdcDepthMarketDataField& Dept
 	while((r=pTradeReq->ReqQryInvestorPosition(&Req,nTradeRequestID++))==-2 || r==-3)
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
-
 void CTradeRsp::HandleRspQryOrder(CThostFtdcOrderField& Order, CThostFtdcRspInfoField& RspInfo, int nRequestID, bool bIsLast)
 {
 	if(RspInfo.ErrorID!=0){
@@ -8430,7 +8304,6 @@ void CTradeRsp::HandleRspQryTrade(CThostFtdcTradeField& Trade, CThostFtdcRspInfo
 		return;
 	status_print("查询成交单成功.");
 }
-
 void CTradeRsp::HandleRspOrderInsert(CThostFtdcInputOrderField& InputOrder, CThostFtdcRspInfoField& RspInfo, int nRequestID, bool bIsLast)
 {
 	if(RspInfo.ErrorID!=0){
@@ -8484,7 +8357,6 @@ void CTradeRsp::HandleRspOrderInsert(CThostFtdcInputOrderField& InputOrder, CTho
 		}
 	}
 }
-
 void CTradeRsp::HandleRspOrderAction(CThostFtdcInputOrderActionField& InputOrderAction, CThostFtdcRspInfoField& RspInfo, int nRequestID, bool bIsLast)
 {
 	if(RspInfo.ErrorID!=0){
@@ -8527,7 +8399,6 @@ void CTradeRsp::HandleRspOrderAction(CThostFtdcInputOrderActionField& InputOrder
 		}
 	}
 }
-
 void CTradeRsp::HandleRspQryInvestorPosition(CThostFtdcInvestorPositionField& InvestorPosition, CThostFtdcRspInfoField& RspInfo, int nRequestID, bool bIsLast)
 {
 	if(RspInfo.ErrorID!=0){
@@ -8780,7 +8651,6 @@ void CTradeRsp::HandleRspQryInvestorPosition(CThostFtdcInvestorPositionField& In
 	while((r=pTradeReq->ReqQryTradingAccount(&Req,nTradeRequestID++))==-2 || r==-3)
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
-
 void CTradeRsp::HandleRspQryTradingAccount(CThostFtdcTradingAccountField& TradingAccount, CThostFtdcRspInfoField& RspInfo, int nRequestID, bool bIsLast)
 {
 	if(RspInfo.ErrorID!=0){
@@ -8815,8 +8685,6 @@ void CTradeRsp::HandleRspQryTradingAccount(CThostFtdcTradingAccountField& Tradin
 		break;
 	}
 }
-
-
 void CTradeRsp::HandleRtnOrder(CThostFtdcOrderField& Order)
 {
 	char action[10];
@@ -9041,7 +8909,6 @@ void CTradeRsp::HandleRtnOrder(CThostFtdcOrderField& Order)
 		}
 	}
 }
-
 void CTradeRsp::HandleRtnTrade(CThostFtdcTradeField& Trade)
 {
 	char action[10];
@@ -9141,7 +9008,6 @@ void CTradeRsp::HandleRtnTrade(CThostFtdcTradeField& Trade)
 		}
 	}
 }
-
 void CTradeRsp::HandleErrRtnOrderInsert(CThostFtdcInputOrderField& InputOrder, CThostFtdcRspInfoField& RspInfo)
 {
 	if(RspInfo.ErrorID!=0){
@@ -9313,7 +9179,6 @@ void CQuoteRsp::HandleRspUserLogin(CThostFtdcRspUserLoginField& RspUserLogin,CTh
 void CQuoteRsp::HandleRspUserLogout(CThostFtdcUserLogoutField& UserLogout,CThostFtdcRspInfoField& RspInfo,int nRequestID,bool bIsLast)
 {
 }
-
 void CQuoteRsp::HandleRtnDepthMarketData(CThostFtdcDepthMarketDataField& DepthMarketData)
 {
 	int i;
@@ -9469,7 +9334,6 @@ void corner_refresh_screen()
 // 	clear();
 	corner_redraw();
 }
-
 void corner_redraw()
 {
 	int y,x;
@@ -9486,7 +9350,6 @@ void corner_redraw()
 	corner_display_matches();
 	corner_display_focus();
 }
-
 void corner_display_input()
 {
 	int y,x;
@@ -9494,7 +9357,6 @@ void corner_display_input()
 	getmaxyx(stdscr,y,x);
 	mvwprintw(corner_win,1,1,strsearching);
 }
-
 void corner_display_matches()
 {
 	int i,j;
@@ -9516,13 +9378,11 @@ void corner_display_matches()
 		}
 	}
 }
-
 void corner_destroy()
 {
 	delwin(corner_win);
 	corner_win=NULL;
 }
-
 void corner_choose_item()
 {
 	if(corner_curr_line>0){// selected
@@ -9610,7 +9470,6 @@ int on_key_pressed_corner(int ch)
 	}
 	return 0;
 }
-
 void corner_research()
 {
 	corner_curr_line=0,corner_curr_col=1,corner_max_lines=5,corner_max_cols=20;
@@ -9624,7 +9483,6 @@ void corner_move_left_1_pos()
 	}
 	corner_redraw();
 }
-
 void corner_move_right_1_pos()
 {
 	if(corner_curr_col!=corner_max_cols){
@@ -9632,19 +9490,16 @@ void corner_move_right_1_pos()
 	}
 	corner_redraw();
 }
-
 void corner_delete_char_at_current_pos()
 {
 
 }
-
 void corner_delete_char_before_current_pos()
 {
 	if(strlen(strsearching)>0)
 		strsearching[strlen(strsearching)-1]='\0';
 	corner_research();
 }
-
 int input_parse_corner(int *num,int *cmd)
 {
 	char* p=corner_input;
@@ -9665,7 +9520,6 @@ int input_parse_corner(int *num,int *cmd)
 	
 	return 0;
 }
-
 void corner_move_forward_1_line()
 {
 	if(corner_curr_line==0){	// first select
@@ -9712,7 +9566,6 @@ void corner_move_forward_1_line()
 	}
 	corner_redraw();
 }
-
 void corner_move_backward_1_line()
 {
 	if(corner_curr_line==0){	// first select
@@ -9746,7 +9599,6 @@ void corner_move_backward_1_line()
 
 	corner_redraw();
 }
-
 void corner_reset()
 {
 	corner_curr_line=0,corner_curr_col=1,corner_max_lines=5,corner_max_cols=20;
@@ -9755,13 +9607,11 @@ void corner_reset()
 	memset(strsearching,0x00,sizeof(strsearching));
 	memset(strmatch,0x00,sizeof(strmatch));
 }
-
 void corner_display_focus()
 {
 	if(corner_curr_line!=0)
 		mvwchgat(corner_win,corner_curr_line+1,1,corner_max_cols,A_REVERSE,0,NULL);
 }
-
 
 // Order Corner
 
@@ -9790,7 +9640,6 @@ void order_corner_refresh_screen()
 // 	clear();
 	order_corner_redraw();
 }
-
 void order_corner_redraw()
 {
 	int y,x;
@@ -9807,7 +9656,6 @@ void order_corner_redraw()
 	order_corner_display_matches();
 	order_corner_display_focus();
 }
-
 void order_corner_display_input()
 {
 	int y,x;
@@ -9815,7 +9663,6 @@ void order_corner_display_input()
 	getmaxyx(stdscr,y,x);
 	mvwprintw(order_corner_win,1,1,order_strsearching);
 }
-
 void order_corner_display_matches()
 {
 	int i,j;
@@ -9846,13 +9693,11 @@ void order_corner_display_matches()
 		}
 	}
 }
-
 void order_corner_destroy()
 {
 	delwin(order_corner_win);
 	order_corner_win=NULL;
 }
-
 void order_corner_choose_item()
 {
 	if(order_corner_curr_line>0){// selected
@@ -9975,7 +9820,6 @@ int order_on_key_pressed_corner(int ch)
 	}
 	return 0;
 }
-
 void order_corner_research()
 {
 	order_corner_curr_line=0,order_corner_curr_col=1,order_corner_max_lines=5,order_corner_max_cols=20;
@@ -9989,7 +9833,6 @@ void order_corner_move_left_1_pos()
 	}
 	order_corner_redraw();
 }
-
 void order_corner_move_right_1_pos()
 {
 	if(order_corner_curr_col!=order_corner_max_cols){
@@ -9997,19 +9840,16 @@ void order_corner_move_right_1_pos()
 	}
 	order_corner_redraw();
 }
-
 void order_corner_delete_char_at_current_pos()
 {
 
 }
-
 void order_corner_delete_char_before_current_pos()
 {
 	if(strlen(order_strsearching)>0)
 		order_strsearching[strlen(order_strsearching)-1]='\0';
 	order_corner_research();
 }
-
 int order_input_parse_corner(int *num,int *cmd)
 {
 	char* p=order_corner_input;
@@ -10030,7 +9870,6 @@ int order_input_parse_corner(int *num,int *cmd)
 	
 	return 0;
 }
-
 void order_corner_move_forward_1_line()
 {
 	if(order_corner_curr_line==0){	// first select
@@ -10105,7 +9944,6 @@ void order_corner_move_forward_1_line()
 	}
 	order_corner_redraw();
 }
-
 void order_corner_move_backward_1_line()
 {
 	if(order_corner_curr_line==0){	// first select
@@ -10155,7 +9993,6 @@ void order_corner_move_backward_1_line()
 
 	order_corner_redraw();
 }
-
 void order_corner_reset()
 {
 	order_corner_curr_line=0,order_corner_curr_col=1,order_corner_max_lines=5,order_corner_max_cols=20;
@@ -10164,7 +10001,6 @@ void order_corner_reset()
 	memset(order_strsearching, 0x00, sizeof(order_strsearching));
 	memset(order_strmatch, 0x00, sizeof(order_strmatch));
 }
-
 void order_corner_display_focus()
 {
 	if(order_corner_curr_line!=0)
