@@ -1442,7 +1442,6 @@ CQuoteRsp::CQuoteRsp()
 }
 CQuoteRsp::~CQuoteRsp()
 {
-	
 }
 void CQuoteRsp::OnFrontConnected()
 {
@@ -8082,8 +8081,10 @@ void CTradeRsp::HandleRspUserLogin(CThostFtdcRspUserLoginField& RspUserLogin,CTh
 	int r=0;
 
 	memset(&Req,0x00,sizeof(Req));
-	while((r=pTradeReq->ReqQryInstrument(&Req,nTradeRequestID++))==-2 || r==-3)
+	while((r=pTradeReq->ReqQryInstrument(&Req,nTradeRequestID++))==-2 || r==-3){
+		status_print("pTradeReq->ReqQryInstrument = %d", r);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
 }
 void CTradeRsp::HandleRspUserLogout(CThostFtdcUserLogoutField& UserLogout,CThostFtdcRspInfoField& RspInfo,int nRequestID,bool bIsLast)
 {
@@ -8100,6 +8101,7 @@ void CTradeRsp::HandleRspQryInstrument(CThostFtdcInstrumentField& Instrument, CT
 
 	// Check existance
 	for(i=0;i<vquotes.size();i++){
+		status_print("check existance.");
 		if(strcmp(Instrument.InstrumentID,vquotes[i].product_id)==0){
 			if(bIsLast){
 				CThostFtdcQryDepthMarketDataField Req;
@@ -8117,6 +8119,7 @@ void CTradeRsp::HandleRspQryInstrument(CThostFtdcInstrumentField& Instrument, CT
 	}
 
 	if(strlen(Instrument.InstrumentID)>0){
+		status_print("add quote");
 		quotation_t quote;
 		memset(&quote,0x00,sizeof(quote));
 		strcpy(quote.product_id,Instrument.InstrumentID);
@@ -8153,8 +8156,11 @@ void CTradeRsp::HandleRspQryInstrument(CThostFtdcInstrumentField& Instrument, CT
 			subscribe(quote.product_id);
 	}
 
-	if(vquotes.size()==0 || !bIsLast)
+	if (vquotes.size() == 0 || !bIsLast)
+	{
+		status_print("size=%d, bislast=%d", vquotes.size(), bIsLast);
 		return;
+	}
 	status_print("查询合约成功.");
 	//CThostFtdcQryDepthMarketDataField Req;
 	//int r=0;
