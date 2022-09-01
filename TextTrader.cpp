@@ -419,35 +419,24 @@ int main(int argc,char *argv[])
 {
 	std::string market_serv_addr, trade_serv_addr, broker, UserProductInfo, AuthCode, AppID, user, password, market_user, market_password;
 
-	INIReader reader("TextTrader.ini");
+	INIReader reader("TextTrader-TTS.ini");
 
 	// read config from file
 	if (reader.ParseError() < 0) {
 		std::cout << "open ini file failed." << std::endl;
 		return -1;
 	}
-	// market_serv_addr = reader.Get("market", "address", "");
-	// trade_serv_addr = reader.Get("trade", "address", "");
-	// broker = reader.Get("trade", "broker", "");
-	// UserProductInfo = reader.Get("trade", "UserProductInfo", "");
-	// AuthCode = reader.Get("trade", "AuthCode", "");
-	// AppID = reader.Get("trade", "AppID", "");
-	// user = reader.Get("trade", "user", "");
-	// password = reader.Get("trade", "password", "");
-	// market_user = reader.Get("market", "user", "");
-	// market_password = reader.Get("market", "password", "");
+	market_serv_addr = reader.Get("market", "address", "");
+	trade_serv_addr = reader.Get("trade", "address", "");
+	broker = reader.Get("trade", "broker", "");
+	UserProductInfo = reader.Get("trade", "UserProductInfo", "");
+	AuthCode = reader.Get("trade", "AuthCode", "");
+	AppID = reader.Get("trade", "AppID", "");
+	user = reader.Get("trade", "user", "");
+	password = reader.Get("trade", "password", "");
+	market_user = reader.Get("market", "user", "");
+	market_password = reader.Get("market", "password", "");
 
-	market_serv_addr = reader.Get("market-TTS", "address", "");
-	trade_serv_addr = reader.Get("trade-TTS", "address", "");
-	broker = reader.Get("trade-TTS", "broker", "");
-	UserProductInfo = reader.Get("trade-TTS", "UserProductInfo", "");
-	AuthCode = reader.Get("trade-TTS", "AuthCode", "");
-	AppID = reader.Get("trade-TTS", "AppID", "");
-	user = reader.Get("trade-TTS", "user", "");
-	password = reader.Get("trade-TTS", "password", "");
-	market_user = reader.Get("market-TTS", "user", "");
-	market_password = reader.Get("market-TTS", "password", "");
-	
 	int ch;
 	char user_trade_flow_path[256],user_market_flow_path[256];
 
@@ -509,13 +498,14 @@ int main(int argc,char *argv[])
 	pTradeRsp->pTradeReq=CThostFtdcTraderApi::CreateFtdcTraderApi(user_trade_flow_path);
 	pTradeRsp->pTradeReq->RegisterSpi(pTradeRsp);
 	pTradeRsp->pTradeReq->RegisterFront((char*)trade_serv_addr.c_str());
-	// pTradeRsp->pTradeReq->SubscribePrivateTopic(THOST_TERT_RESTART);
-	// pTradeRsp->pTradeReq->SubscribePublicTopic(THOST_TERT_RESTART);
-	pTradeRsp->pTradeReq->SubscribePrivateTopic(THOST_TERT_QUICK);
-	pTradeRsp->pTradeReq->SubscribePublicTopic(THOST_TERT_QUICK);
+	pTradeRsp->pTradeReq->SubscribePrivateTopic(THOST_TERT_RESTART);
+	pTradeRsp->pTradeReq->SubscribePublicTopic(THOST_TERT_RESTART);
+	// pTradeRsp->pTradeReq->SubscribePrivateTopic(THOST_TERT_QUICK);
+	// pTradeRsp->pTradeReq->SubscribePublicTopic(THOST_TERT_QUICK);
 	pTradeRsp->pTradeReq->Init();
 
-
+	// Init etc.
+	#pragma region
 	// Init Columns
 	mcolumns[COL_SYMBOL]=true;vcolumns.push_back(COL_SYMBOL);
 	mcolumns[COL_SYMBOL_NAME]=true;vcolumns.push_back(COL_SYMBOL_NAME);
@@ -609,6 +599,8 @@ int main(int argc,char *argv[])
 	macclist_columns[ACCLIST_COL_BALANCE_AVAILABLE]=true;vacclist_columns.push_back(ACCLIST_COL_BALANCE_AVAILABLE);
 	macclist_columns[ACCLIST_COL_BROKER_ID]=true;vacclist_columns.push_back(ACCLIST_COL_BROKER_ID);
 
+	#pragma endregion
+	
 	std::thread workthread(&work_thread);
 	std::thread timerthread(&time_thread);
 
