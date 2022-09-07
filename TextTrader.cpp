@@ -419,7 +419,7 @@ int main(int argc,char *argv[])
 {
 	std::string market_serv_addr, trade_serv_addr, broker, UserProductInfo, AuthCode, AppID, user, password, market_user, market_password;
 
-	INIReader reader("TextTrader-TTS.ini");
+	INIReader reader("TextTrader-simnow1.ini");
 
 	// read config from file
 	if (reader.ParseError() < 0) {
